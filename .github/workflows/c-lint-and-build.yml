@@ -13,6 +13,7 @@ jobs:
           style: file
           version: 12
           files-changed-only: false
+          tidy-checks: ""
       - name: Linting errors
         if: steps.linter.outputs.checks-failed > 0
         run: exit 1
