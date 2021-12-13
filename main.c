@@ -5,6 +5,14 @@
 #include <unistd.h>
 #include <sys/ioctl.h>
 #include <linux/if_tun.h>
+#include <signal.h>
+
+static volatile sig_atomic_t keepRunning = 1;
+
+static void exit_handler(int signal){
+	if(signal)
+		keepRunning = 0;
+}
 
 int allocate_tap(char *dev)
 {
@@ -37,6 +45,8 @@ int main()
 	int tap_fd = allocate_tap(dev);
 	if (tap_fd == -1)
 		return 1;
+
+	signal(SIGQUIT, exit_handler);
 
 	close(tap_fd);
 	return 0;
