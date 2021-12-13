@@ -6,6 +6,9 @@
 #include <sys/ioctl.h>
 #include <linux/if_tun.h>
 #include <signal.h>
+#include "parser.h"
+
+#define MTU 1514
 
 static volatile sig_atomic_t keepRunning = 1;
 
@@ -47,6 +50,13 @@ int main()
 		return 1;
 
 	signal(SIGQUIT, exit_handler);
+
+	char buffer[MTU];
+	while (keepRunning) {
+		ssize_t length = read(tap_fd, &buffer, MTU);
+		if (length > 0)
+			parse_frame(buffer, tap_fd);
+	}
 
 	close(tap_fd);
 	return 0;
