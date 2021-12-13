@@ -12,8 +12,9 @@
 
 static volatile sig_atomic_t keepRunning = 1;
 
-static void exit_handler(int signal){
-	if(signal)
+static void exit_handler(int signal)
+{
+	if (signal)
 		keepRunning = 0;
 }
 
