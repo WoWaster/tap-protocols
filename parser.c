@@ -2,9 +2,19 @@
 #include <string.h>
 #include <netinet/in.h>
 #include <netinet/ip.h>
+#include <netinet/udp.h>
 #include "parser.h"
 #include "protocols/arp/arp.h"
 #include "globals.h"
+
+void parse_UDP(char *frame, int fd, struct ether_header *eth_header)
+{
+	struct udphdr udp_header;
+	memcpy(&udp_header, frame + IP_HEADER_OFFSET, sizeof(udp_header));
+	if (udp_header.source == htons(68) && udp_header.dest == htons(67)) {
+		// TODO: implement DHCP
+	}
+}
 
 void parse_IP(char *frame, int fd, struct ether_header *eth_header)
 {
