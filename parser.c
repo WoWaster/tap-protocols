@@ -1,12 +1,12 @@
+#include "parser.h"
+#include "globals.h"
+#include "protocols/arp/arp.h"
+#include "protocols/ipv4/udp/dhcp/dhcp.h"
 #include <net/ethernet.h>
-#include <string.h>
 #include <netinet/in.h>
 #include <netinet/ip.h>
 #include <netinet/udp.h>
-#include "parser.h"
-#include "protocols/arp/arp.h"
-#include "globals.h"
-#include "protocols/ipv4/udp/dhcp/dhcp.h"
+#include <string.h>
 
 void parse_UDP(char *frame, int fd, struct ether_header *eth_header)
 {

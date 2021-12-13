@@ -1,12 +1,12 @@
-#include <fcntl.h>
-#include <stdio.h>
-#include <net/if.h>
-#include <string.h>
-#include <unistd.h>
-#include <sys/ioctl.h>
-#include <linux/if_tun.h>
-#include <signal.h>
 #include "parser.h"
+#include <fcntl.h>
+#include <linux/if_tun.h>
+#include <net/if.h>
+#include <signal.h>
+#include <stdio.h>
+#include <string.h>
+#include <sys/ioctl.h>
+#include <unistd.h>
 
 #define MTU 1514
 
