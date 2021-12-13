@@ -10,3 +10,4 @@ add_library(arp protocols/arp/arp.c)
 target_link_libraries(arp globals utils)
 
 add_executable(tap-protocols main.c parser.c parser.h)
+target_link_libraries(tap-protocols arp)
