@@ -32,5 +32,12 @@ int allocate_tap(char *dev)
 
 int main()
 {
+	char dev[IFNAMSIZ];
+
+	int tap_fd = allocate_tap(dev);
+	if (tap_fd == -1)
+		return 1;
+
+	close(tap_fd);
 	return 0;
 }
