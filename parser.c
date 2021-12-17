@@ -2,6 +2,7 @@
 #include "globals.h"
 #include "protocols/arp/arp.h"
 #include "protocols/ipv4/udp/dhcp/dhcp.h"
+#include "protocols/ipv4/icmp/icmp.h"
 #include <net/ethernet.h>
 #include <netinet/in.h>
 #include <netinet/ip.h>
@@ -22,9 +23,8 @@ void parse_IP(char *frame, int fd, struct ether_header *eth_header)
 	memcpy(&ip_header, frame + ETHER_HEADER_OFFSET, sizeof(ip_header));
 	if (ip_header.ip_p == IPPROTO_UDP)
 		parse_UDP(frame, fd, eth_header);
-	if (ip_header.ip_p == IPPROTO_ICMP) {
-		// TODO: implement ICMP
-	}
+	if (ip_header.ip_p == IPPROTO_ICMP)
+		parse_ICMP(frame, fd, eth_header, &ip_header);
 }
 
 void parse_frame(char *frame, int fd)
