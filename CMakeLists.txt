@@ -8,6 +8,8 @@ add_library(utils utils.c)
 target_link_libraries(utils globals)
 add_library(arp protocols/arp/arp.c)
 target_link_libraries(arp globals utils)
+add_library(icmp protocols/ipv4/icmp/icmp.c)
+target_link_libraries(icmp globals utils)
 add_library(dhcp protocols/ipv4/udp/dhcp/dhcp.c)
 target_link_libraries(dhcp globals utils)
 
