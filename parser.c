@@ -1,8 +1,8 @@
 #include "parser.h"
 #include "globals.h"
 #include "protocols/arp/arp.h"
-#include "protocols/ipv4/udp/dhcp/dhcp.h"
 #include "protocols/ipv4/icmp/icmp.h"
+#include "protocols/ipv4/udp/dhcp/dhcp.h"
 #include <net/ethernet.h>
 #include <netinet/in.h>
 #include <netinet/ip.h>
