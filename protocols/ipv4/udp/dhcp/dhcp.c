@@ -140,15 +140,21 @@ void parse_DHCP(char *frame, int fd, struct ether_header *eth_header)
 	if (dhcp_header.magic_cookie != MAGIC_COOKIE)
 		return; // No magic cookie => BOOTP packet, ignore
 
-	if (dhcp_header.options[0] == DHCP_MESSAGE_TYPE) {
-		switch (dhcp_header.options[2]) {
-		case DHCPDISCOVER:
-			printf("Received DHCPDISCOVER\n");
+	int i = 0;
+	while (dhcp_header.options[i] != 255) {
+		if (dhcp_header.options[i] == DHCP_MESSAGE_TYPE) {
+			switch (dhcp_header.options[i + 2]) {
+			case DHCPDISCOVER:
+				printf("Received DHCPDISCOVER\n");
+				break;
+			case DHCPREQEST:
+				printf("Received DHCPREQUEST\n");
+				break;
+			}
+			reply(fd, eth_header, &dhcp_header);
 			break;
-		case DHCPREQEST:
-			printf("Received DHCPREQUEST\n");
-			break;
+		} else {
+			i += dhcp_header.options[i + 1] + 2;
 		}
-		reply(fd, eth_header, &dhcp_header);
 	}
 }
