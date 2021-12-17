@@ -9,22 +9,22 @@
 #include <netinet/udp.h>
 #include <string.h>
 
-void parse_UDP(char *frame, int fd, struct ether_header *eth_header)
+void parse_UDP(char *frame, int fd, struct ether_header *ether_header)
 {
 	struct udphdr udp_header;
 	memcpy(&udp_header, frame + IP_HEADER_OFFSET, sizeof(udp_header));
 	if (udp_header.source == htons(68) && udp_header.dest == htons(67))
-		parse_DHCP(frame, fd, eth_header);
+		parse_DHCP(frame, fd, ether_header);
 }
 
-void parse_IP(char *frame, int fd, struct ether_header *eth_header)
+void parse_IP(char *frame, int fd, struct ether_header *ether_header)
 {
 	struct ip ip_header;
 	memcpy(&ip_header, frame + ETHER_HEADER_OFFSET, sizeof(ip_header));
 	if (ip_header.ip_p == IPPROTO_UDP)
-		parse_UDP(frame, fd, eth_header);
+		parse_UDP(frame, fd, ether_header);
 	if (ip_header.ip_p == IPPROTO_ICMP)
-		parse_ICMP(frame, fd, eth_header, &ip_header);
+		parse_ICMP(frame, fd, ether_header, &ip_header);
 }
 
 void parse_frame(char *frame, int fd)

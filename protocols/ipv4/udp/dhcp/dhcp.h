@@ -21,7 +21,7 @@ enum {
 	END = 255,
 };
 
-struct dhcphdr {
+struct dhcp {
 	uint8_t op; // Message op code / message type.
 	uint8_t htype; // Hardware address type
 	uint8_t hlen; // Hardware address length
@@ -41,13 +41,13 @@ struct dhcphdr {
 	uint8_t options[OPTS_LEN];
 } __attribute__((__packed__));
 
-struct dhcppacket {
-	struct ether_header eth_header;
+struct dhcp_packet {
+	struct ether_header ether_header;
 	struct ip ip_header;
 	struct udphdr udp_header;
-	struct dhcphdr dhcp_header;
+	struct dhcp dhcp_header;
 } __attribute__((__packed__));
 
-void parse_DHCP(char *frame, int fd, struct ether_header *eth_header);
+void parse_DHCP(char *frame, int fd, struct ether_header *ether_header);
 
 #endif //TAP_PROTOCOLS_DHCP_H

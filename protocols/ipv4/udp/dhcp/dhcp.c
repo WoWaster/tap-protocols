@@ -6,8 +6,8 @@
 #include <unistd.h>
 
 #define DHCP_IP_SIZE \
-	sizeof(struct ip) + sizeof(struct udphdr) + sizeof(struct dhcphdr)
-#define DHCP_UDP_SIZE sizeof(struct udphdr) + sizeof(struct dhcphdr)
+	sizeof(struct ip) + sizeof(struct udphdr) + sizeof(struct dhcp)
+#define DHCP_UDP_SIZE sizeof(struct udphdr) + sizeof(struct dhcp)
 
 enum { DHCPDISCOVER = 1, DHCPOFFER = 2, DHCPREQEST = 3, DHCPACK = 5 };
 
@@ -52,12 +52,13 @@ uint8_t options[OPTS_LEN] = { DHCP_MESSAGE_TYPE,
 			      1,
 			      END };
 
-void reply(int fd, struct ether_header *eth_header, struct dhcphdr *dhcp_header)
+void reply(int fd, struct ether_header *ether_header, struct dhcp *dhcp_header)
 {
-	struct ether_header eth_header_out;
-	memcpy(&eth_header_out.ether_dhost, eth_header->ether_shost, MAC_SIZE);
-	memcpy(&eth_header_out.ether_shost, MACS[0], MAC_SIZE);
-	eth_header_out.ether_type = htons(ETHERTYPE_IP);
+	struct ether_header ether_header_out;
+	memcpy(&ether_header_out.ether_dhost, ether_header->ether_shost,
+	       MAC_SIZE);
+	memcpy(&ether_header_out.ether_shost, MACS[0], MAC_SIZE);
+	ether_header_out.ether_type = htons(ETHERTYPE_IP);
 
 	struct ip ip_header_out;
 	memset(&ip_header_out, 0, sizeof(struct ip));
@@ -77,15 +78,15 @@ void reply(int fd, struct ether_header *eth_header, struct dhcphdr *dhcp_header)
 	udp_header_out.len = htons(DHCP_UDP_SIZE);
 	udp_header_out.check = 0;
 
-	struct dhcphdr dhcp_header_out;
-	memset(&dhcp_header_out, 0, sizeof(struct dhcphdr));
+	struct dhcp dhcp_header_out;
+	memset(&dhcp_header_out, 0, sizeof(struct dhcp));
 	dhcp_header_out.op = 2;
 	dhcp_header_out.htype = 1;
 	dhcp_header_out.hlen = ETH_ALEN;
 	dhcp_header_out.xid = dhcp_header->xid;
 	dhcp_header_out.yiaddr = TAP_IP;
 	dhcp_header_out.siaddr = IPS[0];
-	memcpy(&dhcp_header_out.chaddr, eth_header->ether_shost, MAC_SIZE);
+	memcpy(&dhcp_header_out.chaddr, ether_header->ether_shost, MAC_SIZE);
 	dhcp_header_out.magic_cookie = MAGIC_COOKIE;
 	memcpy(&dhcp_header_out.options, options, sizeof(options));
 	switch (dhcp_header->options[2]) {
@@ -114,8 +115,8 @@ void reply(int fd, struct ether_header *eth_header, struct dhcphdr *dhcp_header)
 	udpsum = checksum(&dhcp_header_out, sizeof(dhcp_header_out), udpsum);
 	udp_header_out.check = finish_sum(udpsum);
 
-	struct dhcppacket dhcppacket = { eth_header_out, ip_header_out,
-					 udp_header_out, dhcp_header_out };
+	struct dhcp_packet dhcppacket = { ether_header_out, ip_header_out,
+					  udp_header_out, dhcp_header_out };
 
 	ssize_t error = write(fd, &dhcppacket, sizeof(dhcppacket));
 	if (error == -1) {
@@ -132,9 +133,9 @@ void reply(int fd, struct ether_header *eth_header, struct dhcphdr *dhcp_header)
 	}
 }
 
-void parse_DHCP(char *frame, int fd, struct ether_header *eth_header)
+void parse_DHCP(char *frame, int fd, struct ether_header *ether_header)
 {
-	struct dhcphdr dhcp_header;
+	struct dhcp dhcp_header;
 	memcpy(&dhcp_header, frame + UDP_HEADER_OFFSET, sizeof(dhcp_header));
 
 	if (dhcp_header.magic_cookie != MAGIC_COOKIE)
@@ -151,7 +152,7 @@ void parse_DHCP(char *frame, int fd, struct ether_header *eth_header)
 				printf("Received DHCPREQUEST\n");
 				break;
 			}
-			reply(fd, eth_header, &dhcp_header);
+			reply(fd, ether_header, &dhcp_header);
 			break;
 		} else {
 			i += dhcp_header.options[i + 1] + 2;

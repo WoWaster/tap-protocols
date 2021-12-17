@@ -3,7 +3,7 @@
 #include <net/ethernet.h>
 #include <netinet/in.h>
 
-struct arphdr {
+struct arp {
 	uint16_t hrd; // Hardware type
 	uint16_t pro; // Protocol type
 	uint8_t hln; // Hardware address length
@@ -15,9 +15,9 @@ struct arphdr {
 	struct in_addr tpa; // Target protocol address
 } __attribute__((__packed__));
 
-struct arppacket {
-	struct ether_header eth_header;
-	struct arphdr arp_header;
+struct arp_packet {
+	struct ether_header ether_header;
+	struct arp arp_header;
 } __attribute__((__packed__));
 
 void parse_ARP(char *frame, int fd);

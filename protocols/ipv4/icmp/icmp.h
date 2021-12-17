@@ -9,7 +9,7 @@
 	sizeof(struct icmphdr) + sizeof(uint8_t) * ICMP_DATA_SIZE + \
 		2 * sizeof(uint32_t)
 
-struct icmppacket {
+struct icmp_packet {
 	struct ether_header ether_header;
 	struct ip ip_header;
 	struct icmphdr icmphdr;

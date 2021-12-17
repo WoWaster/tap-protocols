@@ -54,11 +54,12 @@ void send_echo_reply(char *frame, int fd, struct ether_header *ether_header,
 	icmp_header_out.checksum = finish_sum(
 		checksum(&data, sizeof(data), icmp_header_out.checksum));
 
-	struct icmppacket icmppacket = { ether_header_out, ip_header_out,
-					 icmp_header_out, send_time, padding };
-	memcpy(&icmppacket.data, data, sizeof(data));
+	struct icmp_packet icmp_packet = { ether_header_out, ip_header_out,
+					   icmp_header_out, send_time,
+					   padding };
+	memcpy(&icmp_packet.data, data, sizeof(data));
 
-	ssize_t error = write(fd, &icmppacket, sizeof(icmppacket));
+	ssize_t error = write(fd, &icmp_packet, sizeof(icmp_packet));
 	if (error == -1) {
 		perror("write(ICMP)");
 		return;

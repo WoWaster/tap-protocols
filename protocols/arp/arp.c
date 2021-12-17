@@ -7,9 +7,8 @@
 
 void parse_ARP(char *frame, int fd)
 {
-	struct arphdr arp_header_in;
-	memcpy(&arp_header_in, frame + ETHER_HEADER_OFFSET,
-	       sizeof(struct arphdr));
+	struct arp arp_header_in;
+	memcpy(&arp_header_in, frame + ETHER_HEADER_OFFSET, sizeof(struct arp));
 
 	if (arp_header_in.op != htons(1)) // Only ARP requests are supported
 		return;
@@ -23,7 +22,7 @@ void parse_ARP(char *frame, int fd)
 	memcpy(&ether_header_out.ether_shost, MACS[index], MAC_SIZE);
 	ether_header_out.ether_type = htons(ETHERTYPE_ARP);
 
-	struct arphdr arp_header_out;
+	struct arp arp_header_out;
 	arp_header_out.hrd = htons(1); // Ethernet
 	arp_header_out.pro = htons(ETHERTYPE_IP); // IPv4
 	arp_header_out.hln = 6; // MAC length
@@ -34,9 +33,9 @@ void parse_ARP(char *frame, int fd)
 	memcpy(&arp_header_out.tha, arp_header_in.sha, MAC_SIZE);
 	arp_header_out.tpa = arp_header_in.spa;
 
-	struct arppacket arppacket = { ether_header_out, arp_header_out };
+	struct arp_packet arp_packet = { ether_header_out, arp_header_out };
 
-	ssize_t error = write(fd, &arppacket, sizeof(arppacket));
+	ssize_t error = write(fd, &arp_packet, sizeof(arp_packet));
 	if (error == -1) {
 		perror("write(ARP)");
 		return;
