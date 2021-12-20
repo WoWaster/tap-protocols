@@ -14,7 +14,7 @@ void send_echo_reply(char *frame, int fd, struct ether_header *ether_header,
 	if (index == -1)
 		return;
 
-	size_t data_size = ip_header->ip_len - 20 - 16;
+	size_t data_size = ntohs(ip_header->ip_len) - 20 - 16;
 	uint8_t *data = malloc(data_size * sizeof(uint8_t));
 	memcpy(data, frame + IP_HEADER_OFFSET + 16,
 	       data_size * sizeof(uint8_t));
