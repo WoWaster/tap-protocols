@@ -2,6 +2,7 @@
 #include "../../../globals.h"
 #include "../../../utils.h"
 #include <stdio.h>
+#include <stdlib.h>
 #include <string.h>
 #include <time.h>
 #include <unistd.h>
@@ -13,8 +14,10 @@ void send_echo_reply(char *frame, int fd, struct ether_header *ether_header,
 	if (index == -1)
 		return;
 
-	uint8_t data[ICMP_DATA_SIZE];
-	memcpy(&data, frame + IP_HEADER_OFFSET + 16, sizeof(data));
+	size_t data_size = ip_header->ip_len - 20 - 16;
+	uint8_t *data = malloc(data_size * sizeof(uint8_t));
+	memcpy(data, frame + IP_HEADER_OFFSET + 16,
+	       data_size * sizeof(uint8_t));
 
 	uint32_t send_time = (uint32_t)time(NULL);
 	uint32_t padding = 0x0;
@@ -51,15 +54,24 @@ void send_echo_reply(char *frame, int fd, struct ether_header *ether_header,
 	icmp_header_out.checksum = checksum(&send_time, sizeof(send_time),
 					    icmp_header_out.checksum);
 
-	icmp_header_out.checksum = finish_sum(
-		checksum(&data, sizeof(data), icmp_header_out.checksum));
+	icmp_header_out.checksum = finish_sum(checksum(
+		data, data_size * sizeof(uint8_t), icmp_header_out.checksum));
 
 	struct icmp_packet icmp_packet = { ether_header_out, ip_header_out,
 					   icmp_header_out, send_time,
 					   padding };
-	memcpy(&icmp_packet.data, data, sizeof(data));
 
-	ssize_t error = write(fd, &icmp_packet, sizeof(icmp_packet));
+	uint8_t *buffer = malloc(sizeof(struct icmp_packet) +
+				 data_size * sizeof(uint8_t));
+	memcpy(buffer, &icmp_packet, sizeof(icmp_packet));
+	memcpy(buffer + sizeof(struct icmp_packet), data,
+	       data_size * sizeof(uint8_t));
+
+	ssize_t error =
+		write(fd, buffer,
+		      sizeof(struct icmp_packet) + data_size * sizeof(uint8_t));
+	free(data);
+	free(buffer);
 	if (error == -1) {
 		perror("write(ICMP)");
 		return;
