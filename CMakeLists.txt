@@ -16,4 +16,4 @@ add_library(dns protocols/ipv4/udp/dns/dns.c)
 target_link_libraries(dns globals utils)
 
 add_executable(tap-protocols main.c parser.c parser.h)
-target_link_libraries(tap-protocols arp dhcp icmp)
+target_link_libraries(tap-protocols arp icmp dhcp dns)
