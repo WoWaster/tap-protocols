@@ -14,6 +14,18 @@ int is_ip_in_subnet(struct in_addr ip)
 	return index;
 }
 
+int is_domain_name_in_subnet(char *name, int length)
+{
+	int index = -1;
+	for (int i = 0; i < SUBNET_SIZE; ++i) {
+		if (strncmp(DOMAIN_NAMES[i], name, length) == 0) {
+			index = i;
+			break;
+		}
+	}
+	return index;
+}
+
 // taken from https://android.googlesource.com/platform/system/core/+/master/libnetutils/packet.c#62
 uint32_t checksum(void *buffer, unsigned int count, uint32_t startsum)
 {
