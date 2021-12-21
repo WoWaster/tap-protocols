@@ -23,11 +23,8 @@ void send_echo_reply(char *frame, int fd, struct ether_header *ether_header,
 	uint32_t padding = 0x0;
 
 	struct ether_header ether_header_out;
-	memcpy(&ether_header_out.ether_dhost, ether_header->ether_shost,
-	       MAC_SIZE);
-	memcpy(&ether_header_out.ether_shost, ether_header->ether_dhost,
-	       MAC_SIZE);
-	ether_header_out.ether_type = htons(ETHERTYPE_IP);
+	fill_ether_header(ether_header, &ether_header_out,
+			  ether_header->ether_dhost);
 
 	struct ip ip_header_out;
 	memset(&ip_header_out, 0, sizeof(struct ip));

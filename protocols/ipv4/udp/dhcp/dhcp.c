@@ -55,10 +55,7 @@ uint8_t options[OPTS_LEN] = { DHCP_MESSAGE_TYPE,
 void reply(int fd, struct ether_header *ether_header, struct dhcp *dhcp_header)
 {
 	struct ether_header ether_header_out;
-	memcpy(&ether_header_out.ether_dhost, ether_header->ether_shost,
-	       MAC_SIZE);
-	memcpy(&ether_header_out.ether_shost, MACS[0], MAC_SIZE);
-	ether_header_out.ether_type = htons(ETHERTYPE_IP);
+	fill_ether_header(ether_header, &ether_header_out, MACS[0]);
 
 	struct ip ip_header_out;
 	memset(&ip_header_out, 0, sizeof(struct ip));

@@ -1,5 +1,6 @@
 #include "utils.h"
 #include "globals.h"
+#include <string.h>
 
 int is_ip_in_subnet(struct in_addr ip)
 {
@@ -35,4 +36,14 @@ uint32_t checksum(void *buffer, unsigned int count, uint32_t startsum)
 uint32_t finish_sum(uint32_t sum)
 {
 	return ~sum & 0xffff;
+}
+
+void fill_ether_header(struct ether_header *ether_header_in,
+		       struct ether_header *ether_header_out,
+		       const uint8_t source[ETH_ALEN])
+{
+	memcpy(ether_header_out->ether_dhost, ether_header_in->ether_shost,
+	       MAC_SIZE);
+	memcpy(ether_header_out->ether_shost, source, MAC_SIZE);
+	ether_header_out->ether_type = ether_header_in->ether_type;
 }
