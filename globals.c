@@ -10,5 +10,7 @@ const uint8_t MACS[SUBNET_SIZE][ETH_ALEN] = {
 	{ 0x86, 0xb7, 0xfb, 0x46, 0x5c, 0x24 }
 };
 
+const char *DOMAIN_NAMES[SUBNET_SIZE] = { "\6server", "\7client1", "" };
+
 // 192.168.25.42 in network byte order
 const struct in_addr TAP_IP = { 0x2a19a8c0 };
