@@ -5,6 +5,7 @@
 #include <netinet/ip.h>
 
 int is_ip_in_subnet(struct in_addr);
+int is_domain_name_in_subnet(char *name, int length);
 
 uint32_t checksum(void *buffer, unsigned int count, uint32_t startsum);
 uint32_t finish_sum(uint32_t sum);
