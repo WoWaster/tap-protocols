@@ -1,6 +1,6 @@
 #include "dns.h"
 #include "../../../../globals.h"
-#include "../../../../utils.c"
+#include "../../../../utils.h"
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
